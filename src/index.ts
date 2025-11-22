@@ -121,7 +121,7 @@ export const getAllClientIssues = async ({
           (_, i) => `${key}-${i + 1}`
         );
         console.log(
-          `issuekey in (${keysUntilHighestNumber.join(
+          `issuekey in (${keysUntilHighestNumber.map(key => `"${key}"`).join(
             ", "
           )}) AND summary !~ "old" AND summary !~ "deprecated" ORDER BY created DESC`
         );
@@ -174,7 +174,7 @@ export const getAllInternalIssues = async ({
 }: JiraInternalIssuesOptions) => {
   try {
     const jqlQuery =
-      `project IN (${projectKeys.join(
+      `project IN (${projectKeys.map(key => `"${key}"`).join(
         ", "
       )}) AND summary !~ "old" AND summary !~ "deprecated" ORDER BY created DESC`;
     const allIssues = await fetchAllJiraIssues({
