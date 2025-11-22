@@ -1,0 +1,263 @@
+
+import {
+    StatusName,
+    StatusId,
+    StatusCategoryKey,
+    StatusCategoryName,
+    ProjectKey,
+    ProjectName,
+    PriorityName,
+    PriorityId,
+    IssueTypeName,
+    ReporterDisplayName,
+    ReporterEmailAddress,
+    ReporterAccountId,
+    AssigneeDisplayName,
+    AssigneeEmailAddress,
+    AssigneeAccountId,
+    CreatorDisplayName,
+    CreatorEmailAddress,
+    CreatorAccountId,
+    Label,
+  } from "./literals.generated"
+
+  import { FIELD_MAP } from "./constants";
+
+  export interface JiraConfig {
+    host: string,
+    email: string,
+    apiToken: string,
+    projectKeys: string[]
+    specialProjectKeys: string[]
+    internalProjectKeys: string[]
+  }
+
+  export interface JiraClientOptions {
+    host: string,
+    email: string,
+    apiToken: string,
+    jqlQuery: string,
+    batchSize: number,
+    delayMs: number
+  }
+
+  export interface JiraClientIssuesOptions extends Omit<JiraClientOptions, 'jqlQuery'> {
+    projectKeys: string[]
+    highestNumber?: number
+  }
+  export interface JiraInternalIssuesOptions extends Omit<JiraClientOptions, 'jqlQuery'> {
+    projectKeys: string[]
+  }
+  export interface JiraSpecialIssuesOptions extends Omit<JiraClientOptions, 'jqlQuery'> {
+    projectKeys: string[]
+  }
+
+  export type FieldMapKeys = keyof typeof FIELD_MAP;
+  export type FieldMapValues = (typeof FIELD_MAP)[FieldMapKeys];
+  
+  export interface JiraUser {
+    self: string
+    accountId: ReporterAccountId | AssigneeAccountId | CreatorAccountId
+    emailAddress: ReporterEmailAddress | AssigneeEmailAddress | CreatorEmailAddress
+    avatarUrls: Record<"16x16" | "24x24" | "32x32" | "48x48", string>
+    displayName: ReporterDisplayName | AssigneeDisplayName | CreatorDisplayName
+    active: boolean
+    timeZone: string
+    accountType: string
+  }
+  
+  export interface JiraStatusCategory {
+    self: string
+    id: number
+    key: StatusCategoryKey
+    colorName: string
+    name: StatusCategoryName
+  }
+  
+  export interface JiraStatus {
+    self: string
+    description: string
+    iconUrl: string
+    name: StatusName
+    id: StatusId
+    statusCategory: JiraStatusCategory
+  }
+  
+  export interface JiraPriority {
+    self: string
+    iconUrl: string
+    name: PriorityName
+    id: PriorityId
+  }
+  
+  export interface JiraProjectCategory {
+    self: string
+    id: string
+    description: string
+    name: string
+  }
+  
+  export interface JiraProject {
+    self: string
+    id: string
+    key: ProjectKey
+    name: ProjectName
+    projectTypeKey: string
+    simplified: boolean
+    avatarUrls: Record<"16x16" | "24x24" | "32x32" | "48x48", string>
+    projectCategory: JiraProjectCategory
+  }
+  
+  export interface JiraIssueType {
+    self: string
+    id: string
+    description: string
+    iconUrl: string
+    name: IssueTypeName
+    subtask: boolean
+    hierarchyLevel: number
+  }
+  
+  export interface JiraCommentList {
+    comments: JiraComment[]
+    self: string
+    maxResults: number
+    total: number
+    startAt: number
+  }
+  
+  export interface JiraComment {
+    self: string
+    id: string
+    author: JiraUser
+    body: string
+    updateAuthor: JiraUser
+    created: string
+    updated: string
+    jsdPublic: boolean
+  }
+  
+  export interface JiraProgress {
+    progress: number
+    total: number
+  }
+  
+  export interface JiraVotes {
+    self: string
+    votes: number
+    hasVoted: boolean
+  }
+  
+  export interface JiraWatches {
+    self: string
+    watchCount: number
+    isWatching: boolean
+  }
+  
+  export interface JiraTimetracking {
+    originalEstimate?: string
+    remainingEstimate?: string
+    timeSpent?: string
+    originalEstimateSeconds?: number
+    remainingEstimateSeconds?: number
+    timeSpentSeconds?: number
+  }
+  
+  export type JiraCustomFieldsRaw = {
+    customfield_12001?: string | null
+    customfield_12108?: string | null
+    customfield_12221?: string | null
+    customfield_12225?: string | null
+    customfield_12235?: { languageCode: string; displayName: string } | null
+    customfield_12236?: { self: string; id: string; value: string }[] | null
+    customfield_12269?: { self: string; value: string; id: string } | null
+    customfield_12273?: number | null
+    customfield_12281?: string | null
+    customfield_12285?: string | null
+    customfield_11303?: string | null
+    customfield_10001?: unknown[] | null
+    customfield_10002?: string | null
+  }
+  
+  export type JiraCustomFieldsStandardized = {
+    requirementId?: string | null
+    skillsNotes?: string | null
+    account?: string | null
+    approach?: string | null
+    requestLanguage?: { languageCode: string; displayName: string } | null
+    devices?: { self: string; id: string; value: string }[] | null
+    overageCalculator?: { self: string; value: string; id: string } | null
+    workRatioAutomation?: number | null
+    acceptanceCriteria?: string | null
+    productboardUrl?: string | null
+    startDate?: string | null
+    sprint?: unknown[] | null
+    epicLink?: string | null
+  }
+  
+  export interface JiraBaseFields {
+    statuscategorychangedate: string
+    fixVersions: unknown[]
+    statusCategory: JiraStatusCategory
+    resolution: unknown | null
+    lastViewed: string | null
+    priority: JiraPriority
+    labels: Label[]
+    aggregatetimeoriginalestimate: number | null
+    timeestimate: number | null
+    issuelinks: unknown[]
+    assignee: JiraUser | null
+    status: JiraStatus
+    components: { name: string }[]
+    aggregatetimeestimate: number | null
+    creator: JiraUser
+    subtasks: unknown[]
+    reporter: JiraUser
+    aggregateprogress: JiraProgress
+    progress: JiraProgress
+    votes: JiraVotes
+    worklog: JiraCommentList
+    issuetype: JiraIssueType
+    timespent: number | null
+    project: JiraProject
+    aggregatetimespent: number | null
+    resolutiondate: string | null
+    workratio: number
+    watches: JiraWatches
+    created: string
+    updated: string
+    timeoriginalestimate: number | null
+    description: string | null
+    timetracking: JiraTimetracking
+    security: unknown | null
+    attachment: unknown[]
+    summary: string
+    environment: string | null
+    duedate: string | null
+    comment: JiraCommentList
+  }
+  
+  export type JiraRawFields = JiraBaseFields & JiraCustomFieldsRaw
+  export type JiraStandardizedFields = JiraBaseFields & JiraCustomFieldsStandardized
+  
+  export interface JiraRawIssue {
+    expand?: string | undefined
+    id: string
+    self?: string
+    key: string
+    fields: JiraRawFields
+    renderedFields: JiraRawFields
+  }
+  
+  export interface JiraStandardizedIssue {
+    expand: string
+    id: string
+    self: string
+    key: string
+    fields: JiraStandardizedFields
+    renderedFields: JiraStandardizedFields
+  }
+
+export type IssueLike = JiraRawIssue | JiraStandardizedIssue
+export type LiteralCollection = Record<string, Set<string>>
+export type LiteralAggregates = Record<string, string[]>

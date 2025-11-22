@@ -1,0 +1,15 @@
+export const FIELD_MAP = {
+    customfield_12001: "requirementId",
+    customfield_12108: "skillsNotes",
+    customfield_12221: "account",
+    customfield_12225: "approach",
+    customfield_12235: "requestLanguage",
+    customfield_12236: "devices",
+    customfield_12269: "overageCalculator",
+    customfield_12273: "workRatioAutomation",
+    customfield_12281: "acceptanceCriteria",
+    customfield_12285: "productboardUrl",
+    customfield_11303: "startDate",
+    customfield_10001: "sprint",
+    customfield_10002: "epicLink",
+  } as const;
