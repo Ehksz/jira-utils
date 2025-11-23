@@ -4,12 +4,13 @@ import { writeLiteralTypesFile } from "./utils";
 import path from "path";
 import { execSync } from "child_process";
 import fs from "fs";
-import { JiraConfig } from "./types";
+import { JiraConfig, JiraStandardizedIssue } from "./types";
 import {
   getAllClientIssues,
   getSpecialIssues,
   getAllInternalIssues, getMyIssueKeys
 } from ".";
+import { chunk } from "lodash-es";
 
 async function main() {
   const configPath = path.join(process.cwd(), "jira.config.json");
@@ -45,15 +46,22 @@ async function main() {
   const uniqueProjectKeysThatImAssigneedTo = [
     ...new Set(myIssueKeys.map((key) => key.split("-")[0])),
   ];
+  console.log(`Found ${uniqueProjectKeysThatImAssigneedTo.length} unique project keys that I'm assigneed to`);
+  const clientIssues: JiraStandardizedIssue[] = [];
 
-  const clientIssues = await getAllClientIssues({
-    host: config.host,
-    email: config.email,
-    apiToken: config.apiToken,
-    projectKeys: uniqueProjectKeysThatImAssigneedTo,
-    batchSize: 50,
-    delayMs: 250,
-  });
+  const chunksOfProjectKeys = chunk(uniqueProjectKeysThatImAssigneedTo, 10);
+  for (const chunk of chunksOfProjectKeys) {
+    const issuesForChunk = await getAllClientIssues({
+      host: config.host,
+      email: config.email,
+      apiToken: config.apiToken,
+      projectKeys: chunk,
+      batchSize: 50,
+      delayMs: 250,
+    });
+    console.log(`Found ${issuesForChunk.length} client issues for chunk ${chunk.join(", ")}`);
+    clientIssues.push(...issuesForChunk);
+  }
 
   const internalIssues = await getAllInternalIssues({
     host: config.host,

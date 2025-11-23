@@ -124,7 +124,8 @@ export async function getMyProjectKeys({
     const projectKeys = projects.values
       ?.map((project) => project.key)
       .filter(Boolean) as string[];
-
+      
+    console.log(`Found ${projectKeys.length} projects associated with user`);
     return projectKeys;
   } catch (error) {
     console.error("Failed to fetch user projects:", error);
@@ -195,6 +196,7 @@ export async function getMyIssueKeys({
       }
     }
 
+    console.log(`Found ${allIssueKeys.length} issue keys associated with user`);
     return allIssueKeys;
   } catch (error) {
     console.error("Failed to fetch user issue keys:", error);
