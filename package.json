@@ -8,8 +8,7 @@
         "jira-generate-types": "dist/cli.js"
     },
     "files": [
-        "dist",
-        "src"
+        "dist"
     ],
     "repository": {
         "type": "git",

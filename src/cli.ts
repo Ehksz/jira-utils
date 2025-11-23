@@ -84,14 +84,22 @@ async function main() {
   const allIssues = [...clientIssues, ...internalIssues, ...specialIssues];
 
   const packageDir = path.resolve(__dirname, "..");
-  const outputPath = path.join(packageDir, "src", "literals.generated.ts");
+  const outputPath = path.join(packageDir, "dist", "literals.generated.js");
+  const outputPathTs = path.join(packageDir, "dist", "literals.generated.d.ts");
 
-  writeLiteralTypesFile(allIssues, outputPath);
+  const timestamp = new Date().toISOString();
+  const typeDefinitions = writeLiteralTypesFile(allIssues, outputPathTs);
 
-  execSync("npm run build", {
-    cwd: packageDir,
-    stdio: "inherit",
-  });
+  const jsContent = `"use strict";
+// Auto-generated on ${timestamp}
+// ⚠️ Do not edit manually — these are derived from Jira data.
+Object.defineProperty(exports, "__esModule", { value: true });
+`;
+
+  fs.writeFileSync(outputPath, jsContent, "utf8");
+
+  console.log(`✅ Generated ${outputPathTs}`);
+  console.log(`📊 Total issues processed: ${allIssues.length}`);
 }
 
 main().catch((error) => {
