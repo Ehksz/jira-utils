@@ -5,37 +5,42 @@
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
     "bin": {
-      "jira-generate-types": "dist/cli.js"
+        "jira-generate-types": "dist/cli.js"
     },
     "files": [
-      "dist",
-      "src"
+        "dist",
+        "src"
     ],
     "repository": {
-      "type": "git",
-      "url": "git+https://github.com/ehksz/jira-utils.git"
+        "type": "git",
+        "url": "git+https://github.com/ehksz/jira-utils.git"
     },
     "scripts": {
-      "build": "tsc",
-      "test": "jest",
-      "prepare": "npm run build"
+        "build": "tsc",
+        "test": "jest",
+        "prepare": "npm run build"
     },
-    "keywords": ["jira", "typescript", "api"],
+    "keywords": [
+        "jira",
+        "typescript",
+        "api"
+    ],
     "author": "Xavier Viera",
     "license": "MIT",
     "dependencies": {
-      "@types/lodash-es": "^4.17.12",
-      "axios": "^1.6.0",
-      "humps": "^2.0.1",
-      "jira.js": "^5.2.2",
-      "lodash-es": "^4.17.21",
-      "ts-case-convert": "^2.1.0"
+        "@types/lodash-es": "^4.17.12",
+        "axios": "^1.13.2",
+        "bitbucket": "^2.12.0",
+        "humps": "^2.0.1",
+        "jira.js": "^5.2.2",
+        "lodash-es": "^4.17.21",
+        "ts-case-convert": "^2.1.0"
     },
     "devDependencies": {
-      "@types/humps": "^2.0.5",
-      "@types/node": "^20.8.4",
-      "jest": "^29.7.0",
-      "ts-jest": "^29.1.1",
-      "typescript": "^5.2.2"
+        "@types/humps": "^2.0.5",
+        "@types/node": "^20.8.4",
+        "jest": "^29.7.0",
+        "ts-jest": "^29.1.1",
+        "typescript": "^5.2.2"
     }
-  }
+}

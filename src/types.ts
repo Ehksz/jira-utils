@@ -30,6 +30,13 @@ import {
     projectKeys: string[]
     specialProjectKeys: string[]
     internalProjectKeys: string[]
+    bitbucketToken: string
+    workspace: string
+  }
+
+  export interface PaginatedPullRequests {
+    values: BitbucketPullRequest[];
+    next?: string;
   }
 
   export interface JiraClientOptions {
@@ -39,6 +46,12 @@ import {
     jqlQuery: string,
     batchSize: number,
     delayMs: number
+  }
+  export interface GetBitbucketRepoByJiraProjectOptions {
+    username: string,
+    apiToken: string,
+    projectKey: string,
+    workspace: string
   }
 
   export interface JiraClientIssuesOptions extends Omit<JiraClientOptions, 'jqlQuery'> {
@@ -261,3 +274,186 @@ import {
 export type IssueLike = JiraRawIssue | JiraStandardizedIssue
 export type LiteralCollection = Record<string, Set<string>>
 export type LiteralAggregates = Record<string, string[]>
+
+// bitbucket types
+
+export interface Link {
+  href: string;
+}
+
+export interface Links {
+  self: Link;
+  avatar?: Link;
+  html?: Link;
+}
+
+export interface CloneLink {
+  name: string;
+  href: string;
+}
+
+export interface RepositoryLinks extends Links {
+  pullrequests: Link;
+  commits: Link;
+  forks: Link;
+  watchers: Link;
+  branches: Link;
+  tags: Link;
+  downloads: Link;
+  source: Link;
+  clone: CloneLink[];
+  hooks: Link;
+}
+
+export interface Owner {
+  display_name: string;
+  links: Links & {
+    html: Link;
+  };
+  type: string;
+  uuid: string;
+  username: string;
+}
+
+export interface Workspace {
+  type: string;
+  uuid: string;
+  name: string;
+  slug: string;
+  links: Links & {
+    html: Link;
+  };
+}
+  
+export interface Project {
+  type: string;
+  key: string;
+  uuid: string;
+  name: string;
+  links: Links & {
+    html: Link;
+  };
+}
+
+export interface MainBranch {
+  name: string;
+  type: string;
+}
+
+export interface OverrideSettings {
+  default_merge_strategy: boolean;
+  branching_model: boolean;
+}
+
+export interface BitbucketRepository {
+  type: string;
+  full_name: string;
+  links: RepositoryLinks;
+  name: string;
+  slug: string;
+  description: string;
+  scm: string;
+  website: string | null;
+  owner: Owner;
+  workspace: Workspace;
+  is_private: boolean;
+  project: Project;
+  fork_policy: string;
+  created_on: string;
+  updated_on: string;
+  size: number;
+  language: string;
+  uuid: string;
+  mainbranch: MainBranch;
+  override_settings: OverrideSettings;
+  parent: any | null;
+  enforced_signed_commits: boolean | null;
+  has_issues: boolean;
+  has_wiki: boolean;
+}
+
+export interface GetPullRequestsByIssueKeyOptions {
+  username: string,
+  apiToken: string,
+  issueKey: string,
+  workspace: string
+}
+
+
+interface User {
+  display_name: string;
+  links: Links;
+  type: "user";
+  uuid: string;
+  account_id: string;
+  nickname: string;
+}
+
+interface Commit {
+  hash: string;
+  links: Links;
+  type: "commit";
+}
+
+interface Branch {
+  name: string;
+  links?: Record<string, never>;
+}
+
+interface Repository {
+  type: "repository";
+  full_name: string;
+  links: Links;
+  name: string;
+  uuid: string;
+}
+
+interface BranchSource {
+  branch: Branch;
+  commit: Commit;
+  repository: Repository;
+}
+
+interface Summary {
+  type: "rendered";
+  raw: string;
+  markup: "markdown";
+  html: string;
+}
+
+interface PullRequestLinks {
+  self: Link;
+  html: Link;
+  commits: Link;
+  approve: Link;
+  "request-changes": Link;
+  diff: Link;
+  diffstat: Link;
+  comments: Link;
+  activity: Link;
+  merge: Link;
+  decline: Link;
+  statuses: Link;
+}
+
+export interface BitbucketPullRequest {
+  comment_count: number;
+  task_count: number;
+  type: "pullrequest";
+  id: number;
+  title: string;
+  description: string;
+  state: "OPEN" | "MERGED" | "DECLINED" | "SUPERSEDED";
+  draft: boolean;
+  merge_commit: Commit;
+  close_source_branch: boolean;
+  closed_by: User;
+  author: User;
+  reason: string;
+  created_on: string;
+  updated_on: string;
+  destination: BranchSource;
+  source: BranchSource;
+  links: PullRequestLinks;
+  summary: Summary;
+}
